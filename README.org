@@ -1,0 +1,40 @@
+#+TITLE: monads.asd
+
+* Monads in Common Lisp
+This package defines a fairly trivial implementation of monads in
+common lisp. It relies on the 'seq' moacro from vip-utils to implement
+something very much like Haskell's 'do' notation (but with extra
+destructuring superpowers).
+
+* Silly Example
+
+The following uses the ~:list~ monad to return pairs of numbers where
+the first is double the second from a list of numbers from 1 to 20. 
+
+#+begin_src lisp
+(in-package :monads)
+
+(let ((numbers (loop for i from 1 to 20 collect i)))
+  (with-monad :list
+    a <- numbers
+    b <- numbers
+    (when (= a (* 2 b))
+      (unit (list a b)))))
+
+#+end_src
+
+* Defining a Monad
+To define a monad you should provide:-
+1. ~#'bind~ method
+2. ~#'fmap~ method
+3. ~#'monad-return~ method
+4. ~#'check-monad-return-type~ method (possibly).
+
+Defining those are sufficient to get a fully functional monad which
+works as above. See list.lisp or continuation.lisp for trivial
+examples.
+
+The monads are 'named' with a keyword symbol. This works around lack
+of return type polymorphism in Common Lisp. I think.
+
+
